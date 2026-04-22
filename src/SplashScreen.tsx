@@ -1,16 +1,33 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ShaderLabComposition, type ShaderLabConfig } from '@basementstudio/shader-lab'
 
-function computeCellSize(width: number, height: number): number {
-  const largest = Math.max(width, height)
-  if (largest >= 1600) return 7
-  if (largest >= 1200) return 6
-  if (largest >= 900) return 5
-  if (largest >= 600) return 4
-  return 3
+type ResponsiveParams = {
+  cellSize: number
+  crtBloomIntensity: number
+  crtBrightness: number
+  gradientOpacity: number
 }
 
-function buildConfig(cellSize: number): ShaderLabConfig {
+function computeParams(width: number, height: number): ResponsiveParams {
+  const largest = Math.max(width, height)
+  const isMobile = largest < 900
+
+  let cellSize: number
+  if (largest >= 1600) cellSize = 7
+  else if (largest >= 1200) cellSize = 6
+  else if (largest >= 900) cellSize = 5
+  else if (largest >= 600) cellSize = 3
+  else cellSize = 2
+
+  return {
+    cellSize,
+    crtBloomIntensity: isMobile ? 0.9 : 1.28,
+    crtBrightness: isMobile ? 0.4 : 0.5,
+    gradientOpacity: isMobile ? 0.18 : 0.26,
+  }
+}
+
+function buildConfig(p: ResponsiveParams): ShaderLabConfig {
   return {
   layers: [
     {
@@ -57,13 +74,13 @@ function buildConfig(cellSize: number): ShaderLabConfig {
       opacity: 1,
       params: {
         crtMode: 'slot-mask',
-        cellSize,
+        cellSize: p.cellSize,
         scanlineIntensity: 1,
         maskIntensity: 1,
         barrelDistortion: 0.3,
         chromaticAberration: 1.18,
         beamFocus: 0.43,
-        brightness: 0.5,
+        brightness: p.crtBrightness,
         highlightDrive: 1,
         highlightThreshold: 0.27,
         shoulder: 1.03,
@@ -76,7 +93,7 @@ function buildConfig(cellSize: number): ShaderLabConfig {
         glitchSpeed: 1,
         signalArtifacts: 0.45,
         bloomEnabled: true,
-        bloomIntensity: 1.28,
+        bloomIntensity: p.crtBloomIntensity,
         bloomThreshold: 0,
         bloomRadius: 0,
         bloomSoftness: 0,
@@ -146,7 +163,7 @@ function buildConfig(cellSize: number): ShaderLabConfig {
       id: 'a924d323-7026-4b54-8738-355ef0d17009',
       kind: 'source',
       name: 'Gradient',
-      opacity: 0.26,
+      opacity: p.gradientOpacity,
       params: {
         preset: 'neon-glow',
         activePoints: 2,
@@ -223,19 +240,22 @@ function buildConfig(cellSize: number): ShaderLabConfig {
 }
 
 export function SplashScreen() {
-  const [cellSize, setCellSize] = useState(() =>
-    computeCellSize(window.innerWidth, window.innerHeight),
+  const [params, setParams] = useState(() =>
+    computeParams(window.innerWidth, window.innerHeight),
   )
 
   useEffect(() => {
     const onResize = () => {
-      setCellSize(computeCellSize(window.innerWidth, window.innerHeight))
+      setParams(computeParams(window.innerWidth, window.innerHeight))
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const config = useMemo(() => buildConfig(cellSize), [cellSize])
+  const config = useMemo(
+    () => buildConfig(params),
+    [params.cellSize, params.crtBloomIntensity, params.crtBrightness, params.gradientOpacity],
+  )
 
   return (
     <div

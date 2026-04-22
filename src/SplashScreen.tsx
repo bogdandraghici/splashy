@@ -16,8 +16,8 @@ function computeParams(width: number, height: number): ResponsiveParams {
   if (largest >= 1600) cellSize = 7
   else if (largest >= 1200) cellSize = 6
   else if (largest >= 900) cellSize = 5
-  else if (largest >= 600) cellSize = 3
-  else cellSize = 2
+  else if (largest >= 600) cellSize = 3.5
+  else cellSize = 2.5
 
   return {
     cellSize,

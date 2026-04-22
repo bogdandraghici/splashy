@@ -1,6 +1,17 @@
+import { useEffect, useMemo, useState } from 'react'
 import { ShaderLabComposition, type ShaderLabConfig } from '@basementstudio/shader-lab'
 
-const config: ShaderLabConfig = {
+function computeCellSize(width: number, height: number): number {
+  const largest = Math.max(width, height)
+  if (largest >= 1600) return 7
+  if (largest >= 1200) return 6
+  if (largest >= 900) return 5
+  if (largest >= 600) return 4
+  return 3
+}
+
+function buildConfig(cellSize: number): ShaderLabConfig {
+  return {
   layers: [
     {
       blendMode: 'normal',
@@ -46,7 +57,7 @@ const config: ShaderLabConfig = {
       opacity: 1,
       params: {
         crtMode: 'slot-mask',
-        cellSize: 7,
+        cellSize,
         scanlineIntensity: 1,
         maskIntensity: 1,
         barrelDistortion: 0.3,
@@ -203,14 +214,29 @@ const config: ShaderLabConfig = {
       },
     },
   ],
-  timeline: {
-    duration: 8,
-    loop: true,
-    tracks: [],
-  },
+    timeline: {
+      duration: 8,
+      loop: true,
+      tracks: [],
+    },
+  }
 }
 
 export function SplashScreen() {
+  const [cellSize, setCellSize] = useState(() =>
+    computeCellSize(window.innerWidth, window.innerHeight),
+  )
+
+  useEffect(() => {
+    const onResize = () => {
+      setCellSize(computeCellSize(window.innerWidth, window.innerHeight))
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const config = useMemo(() => buildConfig(cellSize), [cellSize])
+
   return (
     <div
       style={{

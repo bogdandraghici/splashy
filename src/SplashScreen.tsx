@@ -199,7 +199,7 @@ const config: ShaderLabConfig = {
       asset: {
         fileName: 'flowx-logo.svg',
         kind: 'image',
-        src: '/flowx-logo.svg',
+        src: `${import.meta.env.BASE_URL}flowx-logo.svg`,
       },
     },
   ],

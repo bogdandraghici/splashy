@@ -6,6 +6,7 @@ type ResponsiveParams = {
   crtBloomIntensity: number
   crtBrightness: number
   gradientOpacity: number
+  imageScale: number
 }
 
 function computeParams(width: number, height: number): ResponsiveParams {
@@ -24,6 +25,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
     crtBloomIntensity: isMobile ? 0.9 : 1.28,
     crtBrightness: isMobile ? 0.4 : 0.5,
     gradientOpacity: isMobile ? 0.18 : 0.26,
+    imageScale: isMobile ? 0.675 : 0.45,
   }
 }
 
@@ -217,7 +219,7 @@ function buildConfig(p: ResponsiveParams): ShaderLabConfig {
       opacity: 1,
       params: {
         fitMode: 'cover',
-        scale: 0.45,
+        scale: p.imageScale,
         offset: [0, 0],
         svgRasterResolution: '2048',
       },
@@ -254,7 +256,13 @@ export function SplashScreen() {
 
   const config = useMemo(
     () => buildConfig(params),
-    [params.cellSize, params.crtBloomIntensity, params.crtBrightness, params.gradientOpacity],
+    [
+      params.cellSize,
+      params.crtBloomIntensity,
+      params.crtBrightness,
+      params.gradientOpacity,
+      params.imageScale,
+    ],
   )
 
   return (

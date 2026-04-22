@@ -25,7 +25,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
     crtBloomIntensity: isMobile ? 0.9 : 1.28,
     crtBrightness: isMobile ? 0.4 : 0.5,
     gradientOpacity: isMobile ? 0.18 : 0.26,
-    imageScale: isMobile ? 0.675 : 0.45,
+    imageScale: isMobile ? 0.8 : 0.45,
   }
 }
 

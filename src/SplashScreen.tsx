@@ -245,17 +245,30 @@ function buildConfig(p: ResponsiveParams): ShaderLabConfig {
 }
 
 export function SplashScreen() {
+  const [viewport, setViewport] = useState(() => ({
+    w: window.innerWidth,
+    h: window.innerHeight,
+    dpr: window.devicePixelRatio || 1,
+  }))
   const [params, setParams] = useState(() =>
     computeParams(window.innerWidth, window.innerHeight),
   )
 
   useEffect(() => {
     const onResize = () => {
+      setViewport({
+        w: window.innerWidth,
+        h: window.innerHeight,
+        dpr: window.devicePixelRatio || 1,
+      })
       setParams(computeParams(window.innerWidth, window.innerHeight))
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  const showDebug =
+    typeof window !== 'undefined' && window.location.search.includes('debug')
 
   const config = useMemo(
     () => buildConfig(params),
@@ -278,6 +291,30 @@ export function SplashScreen() {
         background: '#000',
       }}
     >
+      {showDebug && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 12,
+            left: 12,
+            zIndex: 10,
+            padding: '8px 10px',
+            background: 'rgba(0,0,0,0.7)',
+            color: '#0f0',
+            font: '11px/1.4 ui-monospace, Menlo, monospace',
+            borderRadius: 4,
+            pointerEvents: 'none',
+            whiteSpace: 'pre',
+          }}
+        >
+          {`viewport: ${viewport.w}x${viewport.h} dpr=${viewport.dpr}
+smallest: ${Math.min(viewport.w, viewport.h)}
+cellSize: ${params.cellSize}
+imageScale: ${params.imageScale}
+bloom: ${params.crtBloomIntensity}
+brightness: ${params.crtBrightness}`}
+        </div>
+      )}
       <ShaderLabComposition
         config={config}
         onRuntimeError={(message) => {

@@ -30,7 +30,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
     crtBrightness: isMobile ? 0.2 : 0.5,
     gradientOpacity: isMobile ? 0.18 : 0.26,
     imageScale: isMobile ? 1.0 : 0.45,
-    imageOffsetY: isMobile ? -0.18 : -0.03,
+    imageOffsetY: isMobile ? 0.08 : 0.03,
   }
 }
 

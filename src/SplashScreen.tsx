@@ -17,7 +17,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
   const isMobile = smallest < 600
 
   let cellSize: number
-  if (isMobile) cellSize = 5
+  if (isMobile) cellSize = 6
   else if (largest >= 1600) cellSize = 7
   else if (largest >= 1200) cellSize = 6
   else if (largest >= 900) cellSize = 5
@@ -25,7 +25,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
 
   return {
     cellSize,
-    crtBloomIntensity: isMobile ? 0.9 : 1.28,
+    crtBloomIntensity: isMobile ? 0.75 : 1.28,
     crtBrightness: isMobile ? 0.4 : 0.5,
     gradientOpacity: isMobile ? 0.18 : 0.26,
     imageScale: isMobile ? 1.0 : 0.45,
@@ -223,7 +223,7 @@ function buildConfig(p: ResponsiveParams): ShaderLabConfig {
       params: {
         fitMode: 'cover',
         scale: p.imageScale,
-        offset: [0, 0],
+        offset: [0, -0.03],
         svgRasterResolution: '2048',
       },
       saturation: 1,

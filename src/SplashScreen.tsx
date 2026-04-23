@@ -11,14 +11,17 @@ type ResponsiveParams = {
 
 function computeParams(width: number, height: number): ResponsiveParams {
   const largest = Math.max(width, height)
-  const isMobile = largest < 900
+  const smallest = Math.min(width, height)
+  // Phone short side is ≤ ~500px; iPad mini is 744. Use smaller dim to
+  // reliably separate phones from tablets/desktops regardless of orientation.
+  const isMobile = smallest < 600
 
   let cellSize: number
-  if (largest >= 1600) cellSize = 7
+  if (isMobile) cellSize = 3.5
+  else if (largest >= 1600) cellSize = 7
   else if (largest >= 1200) cellSize = 6
   else if (largest >= 900) cellSize = 5
-  else if (largest >= 600) cellSize = 3.5
-  else cellSize = 3.5
+  else cellSize = 4
 
   return {
     cellSize,

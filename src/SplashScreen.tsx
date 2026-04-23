@@ -7,6 +7,7 @@ type ResponsiveParams = {
   crtBrightness: number
   gradientOpacity: number
   imageScale: number
+  imageOffsetY: number
 }
 
 function computeParams(width: number, height: number): ResponsiveParams {
@@ -17,7 +18,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
   const isMobile = smallest < 600
 
   let cellSize: number
-  if (isMobile) cellSize = 6
+  if (isMobile) cellSize = 7
   else if (largest >= 1600) cellSize = 7
   else if (largest >= 1200) cellSize = 6
   else if (largest >= 900) cellSize = 5
@@ -29,6 +30,7 @@ function computeParams(width: number, height: number): ResponsiveParams {
     crtBrightness: isMobile ? 0.2 : 0.5,
     gradientOpacity: isMobile ? 0.18 : 0.26,
     imageScale: isMobile ? 1.0 : 0.45,
+    imageOffsetY: isMobile ? -0.08 : -0.03,
   }
 }
 
@@ -223,7 +225,7 @@ function buildConfig(p: ResponsiveParams): ShaderLabConfig {
       params: {
         fitMode: 'cover',
         scale: p.imageScale,
-        offset: [0, -0.03],
+        offset: [0, p.imageOffsetY],
         svgRasterResolution: '2048',
       },
       saturation: 1,
@@ -278,6 +280,7 @@ export function SplashScreen() {
       params.crtBrightness,
       params.gradientOpacity,
       params.imageScale,
+      params.imageOffsetY,
     ],
   )
 
